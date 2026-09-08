@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Pulse</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Data loaded at runtime from ./project-data.json -->
+  <main class="dashboard">
+    <header class="dashboard__header">
+      <h1>Project Pulse</h1>
+      <p>Track Mona's project health, ownership, priorities, and latest activity at a glance.</p>
+    </header>
+
+    <section class="dashboard__grid" aria-live="polite"></section>
+
+    <section class="dashboard__empty" hidden>
+      <p>No projects yet.</p>
+    </section>
+
+    <section class="dashboard__error" hidden>
+      <p>Could not load project data. Use Run Project Pulse Dashboard to preview.</p>
+    </section>
+  </main>
+
+  <script>
+    const projectGrid = document.querySelector('.dashboard__grid');
+    const emptyState = document.querySelector('.dashboard__empty');
+    const errorState = document.querySelector('.dashboard__error');
+
+    const knownStatuses = ['on-track', 'at-risk', 'blocked', 'done'];
+    const knownPriorities = ['low', 'medium', 'high', 'critical'];
+
+    function normalizeSlug(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-');
+    }
+
+    function knownSlug(value, knownValues) {
+      const slug = normalizeSlug(value);
+      return knownValues.includes(slug) ? slug : 'unknown';
+    }
+
+    function hasText(value) {
+      return typeof value === 'string' && value.trim().length > 0;
+    }
+
+    function projectText(project, fieldName, fallback) {
+      return hasText(project[fieldName]) ? project[fieldName].trim() : fallback;
+    }
+
+    function setVisible(element, isVisible) {
+      element.hidden = !isVisible;
+    }
+
+    function renderProject(project) {
+      const card = document.createElement('article');
+      card.className = 'project-card';
+
+      const title = document.createElement('h2');
+      title.className = 'project-card__title';
+      title.textContent = projectText(project, 'name', 'Unspecified project');
+
+      const owner = document.createElement('p');
+      owner.className = 'project-card__owner';
+      owner.textContent = `Owner: ${projectText(project, 'owner', 'Unknown owner')}`;
+
+      const meta = document.createElement('div');
+      meta.className = 'project-card__meta';
+
+      const statusText = projectText(project, 'status', 'Unspecified');
+      const status = document.createElement('span');
+      status.className = `badge badge--${knownSlug(statusText, knownStatuses)}`;
+      status.textContent = statusText;
+
+      const priorityText = projectText(project, 'priority', 'Unspecified');
+      const priority = document.createElement('span');
+      priority.className = `priority priority--${knownSlug(priorityText, knownPriorities)}`;
+      priority.textContent = `Priority: ${priorityText}`;
+
+      meta.append(status, priority);
+
+      const activity = document.createElement('p');
+      activity.className = 'project-card__activity';
+      activity.textContent = projectText(project, 'recentActivity', 'No recent activity');
+
+      card.append(title, owner, meta, activity);
+      return card;
+    }
+
+    function renderProjects(projects) {
+      projectGrid.replaceChildren();
+      const fragment = document.createDocumentFragment();
+
+      projects.forEach((project) => {
+        fragment.append(renderProject(project || {}));
+      });
+
+      projectGrid.append(fragment);
+      setVisible(projectGrid, true);
+      setVisible(emptyState, false);
+      setVisible(errorState, false);
+    }
+
+    function showEmptyState() {
+      projectGrid.replaceChildren();
+      setVisible(projectGrid, false);
+      setVisible(emptyState, true);
+      setVisible(errorState, false);
+    }
+
+    function showErrorState() {
+      projectGrid.replaceChildren();
+      setVisible(projectGrid, false);
+      setVisible(emptyState, false);
+      setVisible(errorState, true);
+    }
+
+    fetch('./project-data.json')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Project data request failed with status ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        if (!data || !Array.isArray(data.projects) || data.projects.length === 0) {
+          showEmptyState();
+          return;
+        }
+
+        renderProjects(data.projects);
+      })
+      .catch(() => {
+        showErrorState();
+      });
+  </script>
+</body>
+</html>

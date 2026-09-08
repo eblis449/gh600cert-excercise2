@@ -1,0 +1,54 @@
+{
+  "projects": [
+    {
+      "name": "Octocat Onboarding Refresh",
+      "owner": "Mona",
+      "status": "on-track",
+      "recentActivity": "Updated the contributor welcome checklist and added a quick-start issue template.",
+      "priority": "medium",
+      "progress": 68,
+      "dueDate": "2026-10-02",
+      "summary": "Improves first-week guidance for new contributors."
+    },
+    {
+      "name": "Actions Runner Fleet Upgrade",
+      "owner": "Avery",
+      "status": "at-risk",
+      "recentActivity": "Capacity testing uncovered intermittent queue delays during peak workflow hours.",
+      "priority": "critical",
+      "progress": 42,
+      "dueDate": "2026-09-25",
+      "summary": "Modernizes runner capacity for faster CI feedback."
+    },
+    {
+      "name": "Dependency Radar Automation",
+      "owner": "Kai",
+      "status": "blocked",
+      "recentActivity": "Waiting on security approval for the dependency inventory export permissions.",
+      "priority": "high",
+      "progress": 35,
+      "dueDate": "2026-10-11",
+      "summary": "Surfaces dependency risk before release planning."
+    },
+    {
+      "name": "Codespaces Workshop Dashboard Readiness Review and Learner Feedback Follow-up Initiative",
+      "owner": "Riley",
+      "status": "done",
+      "recentActivity": "Published the final facilitator notes and archived completed workshop tasks.",
+      "priority": "low",
+      "progress": 100,
+      "dueDate": "2026-09-07",
+      "summary": "Wraps the latest learner enablement dashboard review."
+    },
+    {
+      "name": "Issue Triage Signal Boost",
+      "owner": "Sam",
+      "status": "on-track",
+      "recentActivity": "Shipped a saved-view update that highlights stale high-impact bugs for maintainers.",
+      "priority": "high",
+      "progress": 74,
+      "dueDate": "2026-10-18",
+      "summary": "Makes maintainer triage queues easier to scan."
+    }
+  ]
+}
